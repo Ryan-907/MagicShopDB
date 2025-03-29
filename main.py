@@ -7,10 +7,40 @@ RARITIES = ['Common', 'Uncommon', 'Rare', 'Legendary']
 OPTIONS = ['Insert Location', 'Generate New Owner', 'Insert New Item', 'Query Table', 'Create Shop']
 COLUMNS = ['LocationName', 'Owner'] #May be good idea to change into a dictionary
 SHOP_TYPES = ['Potions', 'Weapons & Armor', 'Magic Itmes', 'General Store']
-def generate_location(location, size) -> None:
+
+def get_tables() -> list:
+    conn = sql.connect("shop_inventory.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT name FROM sqlite_master
+        WHERE type='table'
+    """)
+    
+    tables = [row[0] for row in cursor.fetchall()]
+
+    conn.close()
+    return tables
+
+def get_columns(table_name: str) -> list:
+    conn = sql.connect("shop_inventory.db")
+    cursor = conn.cursor()
+
+    cursor.execute(f"PRAGMA table_info({table_name})")
+    columns = [row[1] for row in cursor.fetchall()]
+
+    conn.close()
+    return columns
+
+def generate_location() -> None:
     conn = sql.connect("shop_inventory.db")
     cursor = conn.cursor()
     cursor.execute("PRAGMA foreign_keys = ON")
+
+    location = pyip.inputStr('Enter location name: ', blank= False)
+    size = pyip.inputMenu([size for size in SIZES.keys()], numbered= True)
+
+    size = SIZES[size]
 
     cursor.execute("""
         INSERT INTO LOCATIONS (LocationName, LocationSize)
@@ -20,21 +50,29 @@ def generate_location(location, size) -> None:
     conn.commit()
     conn.close()
 
-def get_list(column, table) -> list:
+def get_list(column=None, table=None) -> None:
     conn = sql.connect("shop_inventory.db")
     cursor = conn.cursor()
+    if table == None:
+        table = pyip.inputMenu(get_tables(), numbered=True)
+    if column == None:
+        column = pyip.inputMenu(get_columns(table), numbered=True)
 
     cursor.execute(f"""
         SELECT {column}
         FROM {table}
     """)
 
-    return [value[0] for value in cursor.fetchall()]
+    print([value[0] for value in cursor.fetchall()])
 
-def generate_owner(owner, charity) -> None:
+def generate_owner() -> None:
     conn = sql.connect("shop_inventory.db")
     cursor = conn.cursor()
     cursor.execute("PRAGMA foreign_keys = ON")
+
+    owner = pyip.inputStr('Enter Owner Name', blank=False)
+    charity = pyip.inputMenu([char for char in CHARITABILITY.keys()], numbered=True)
+    charity = CHARITABILITY[charity]
 
     cursor.execute("""
         INSERT INTO OWNER_CHARITY (Owner, CharityValue)
@@ -44,11 +82,15 @@ def generate_owner(owner, charity) -> None:
     conn.commit()
     conn.close()
 
-def insert_item(ItemName, Description, Rarity) -> None:
+def insert_item() -> None:
     conn = sql.connect("shop_inventory.db")
     cursor = conn.cursor()
     cursor.execute("PRAGMA foreign_keys = ON")
 
+    ItemName = pyip.inputStr("Enter item name: ")
+    Description = pyip.inputStr("Enter the item description: ")
+    Rarity = pyip.inputMenu(RARITIES, numbered=True)
+    
     cursor.execute("""
         INSERT INTO ITEM (ItemName, Description, Rarity)
         VALUES (?, ?, ?)
@@ -57,49 +99,29 @@ def insert_item(ItemName, Description, Rarity) -> None:
     conn.commit()
     conn.close()    
 
-def generate_shop(Owner, LocationName, ShopType) -> None:
+def generate_shop() -> None:
     conn = sql.connect("shop_inventory.db")
     cursor = conn.cursor()
     cursor.execute("PRAGMA foreign_keys = ON")
+
+    Owner = pyip.inputMenu(get_list('Owner', 'OWNER_CHARITY'), 'Select Owner\n', numbered=True)
+    LocationName = pyip.inputMenu(get_list('LocationName', 'LOCATIONS'), 'Select shop location\n', numbered=True)
+    ShopType = pyip.inputMenu(SHOP_TYPES, 'Select shop type\n', numbered=True)
+
     cursor.executemany("""
         INSERT INTO SHOP (Owner, LocationName, ShopType)
         VALUES (?, ?, ?)
     """, (Owner, LocationName, ShopType))
+
+
     conn.commit()
     conn.close()
 
+ACTIONS = {'Generate Location':generate_location, "Generate Owner":generate_owner, 'Insert Item':insert_item, 'Generate Shop':generate_shop, 'Query Table': get_list}
 if __name__=='__main__':
-    action = pyip.inputMenu(OPTIONS, 'Select action\n', numbered=True)
-    if action == OPTIONS[0]:
-        name = pyip.inputStr('Enter location name: ', blank= False)
-        size = pyip.inputMenu([size for size in SIZES.keys()], numbered= True)
-        size = SIZES[size]
-        generate_location(name, size)
+    action = pyip.inputMenu([action for action in ACTIONS.keys()], numbered=True)
+    ACTIONS[action]()
 
-    elif action == OPTIONS[1]:
-        owner = pyip.inputStr('Enter Owner Name', blank=False)
-        charity = pyip.inputMenu([char for char in CHARITABILITY.keys()], numbered=True)
-        charity = CHARITABILITY[charity]
-        generate_owner(owner, charity)
-
-    elif action == OPTIONS[2]:
-        item_name = pyip.inputStr("Enter item name: ")
-        desc = pyip.inputStr("Enter the item description: ")
-        rarity = pyip.inputMenu(RARITIES, numbered=True)
-        insert_item(item_name, desc, rarity)
-
-    elif action == OPTIONS[3]:
-        column = pyip.inputMenu(COLUMNS, numbered=True)
-        if column == COLUMNS[0]:
-            table = 'LOCATIONS'
-        elif column == COLUMNS[1]:
-            table = 'OWNER_CHARITY'
-        print(get_list(column, table))
-    elif action == OPTIONS[4]:
-        owner = pyip.inputMenu(get_list('Owner', 'OWNER_CHARITY'), 'Select Owner\n', numbered=True)
-        location = pyip.inputMenu(get_list('LocationName', 'LOCATIONS'), 'Select shop location\n', numbered=True)
-        s_type = pyip.inputMenu(SHOP_TYPES, 'Select shop type\n', numbered=True)
-        print(f'If this function inserted you would have a {s_type} owned by {owner} in {location}. But it does not do anything!')
 
 
 
