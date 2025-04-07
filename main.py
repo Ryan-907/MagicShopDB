@@ -29,7 +29,7 @@ def generate_owner():
     print(f"Owner '{name}' created.")
 
 
-def insert_item():
+def generate_item():
     name = pyip.inputStr("Enter item name: ")
     desc = pyip.inputStr("Enter description: ")
     rarity = pyip.inputMenu(RARITIES, numbered=True)
@@ -175,7 +175,7 @@ def main():
     ACTIONS = {
         'Generate Location': generate_location,
         'Generate Owner': generate_owner,
-        'Insert Item': insert_item,
+        'Generate Item': generate_item,
         'Create Shop': generate_shop,
         'Update Location': update_location,
         'Update Owner': update_owner,
