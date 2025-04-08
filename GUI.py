@@ -227,6 +227,116 @@ def update_location():
 
     tk.Button(update_loc_window, text="Update Shop", command=submit_updated_location).pack()    
 
+def update_owner():
+    update_owner_window = tk.Toplevel()
+    update_owner_window.title("Update Owners")
+    update_owner_window.geometry(WINDOW_SIZE)
+
+    tk.Label(update_owner_window, text='Select Owner to edit').pack()
+    owners = get_list('Owner',"OWNER")
+    owner_var = tk.StringVar(update_owner_window)
+    owner_var.set(owners[0])
+    owner_menu = tk.OptionMenu(update_owner_window, owner_var, *owners)
+    owner_menu.pack()
+
+    tk.Label(update_owner_window, text='Enter new owner name').pack()
+    owner_name_entry = tk.Entry(update_owner_window)
+    owner_name_entry.focus()
+    owner_name_entry.pack()
+
+    tk.Label(update_owner_window, text='Select new charitability').pack()
+    charitability_var = tk.StringVar(update_owner_window)
+    charitability_var.set(next(iter(CHARITABILITY)))
+    charitability_menu = tk.OptionMenu(update_owner_window, charitability_var, *CHARITABILITY.keys())
+    charitability_menu.pack()
+
+    def submit_updated_owner():
+        cur_name = owner_var.get()
+        name = owner_name_entry.get()
+        charity = charitability_var.get()
+
+        owner = Owner.load_from_db(db=db, name=cur_name)
+        owner.update(db, name, charity)
+
+  
+
+        messagebox.showinfo("Success", f"{cur_name} has been changed to {name}")
+        update_owner_window.destroy()
+
+
+    tk.Button(update_owner_window, text="Update owner", command=submit_updated_owner).pack()   
+
+def update_item():
+    update_item_window = tk.Toplevel()
+    update_item_window.title('Update item')
+    update_item_window.geometry(WINDOW_SIZE)
+
+    tk.Label(update_item_window, text='Select item to update').pack()
+    items = get_list('ItemName', 'ITEM')
+    item_var = tk.StringVar(update_item_window)
+    item_var.set(items[0])
+    item_menu = tk.OptionMenu(update_item_window, item_var, *items)
+    item_menu.pack()
+
+    tk.Label(update_item_window, text = 'Enter new item name').pack()
+    new_item_name_entry = tk.Entry(update_item_window)
+    new_item_name_entry.focus()
+    new_item_name_entry.pack()
+
+    tk.Label(update_item_window, text="Enter new description").pack()
+    new_item_description_text = tk.Text(update_item_window, height=5, width=40)
+    new_item_description_text.pack()
+
+    tk.Label(update_item_window, text='Select a new rarity').pack()
+    new_rarity_var = tk.StringVar(update_item_window)
+    new_rarity_var.set(RARITIES[0])
+    rarity_menu = tk.OptionMenu(update_item_window, new_rarity_var, *RARITIES)
+    rarity_menu.pack()
+
+    tk.Label(update_item_window, text='Select Item Category').pack()
+    categroies = get_list('Category', 'SHOP_TYPE_ALLOWED_CATEGORIES')
+    category_var = tk.StringVar(update_item_window)
+    category_var.set(categroies[0])
+    category_menu = tk.OptionMenu(update_item_window, category_var, *categroies)
+    category_menu.pack()
+
+    universal_check = tk.IntVar()
+    universal_check.set(0)
+    check_box = tk.Checkbutton(
+        update_item_window,
+        text='Universal?',
+        variable=universal_check,
+        onvalue=1,
+        offvalue=0
+    )
+    check_box.pack(pady=5)
+
+    def submit_update_item():
+        item_id = db.fetchall("SELECT ItemID FROM ITEM WHERE ItemName = ?", (item_var.get(),))
+        name = new_item_name_entry.get().strip()
+        description = new_item_description_text.get("1.0", "end-1c")
+        rarity = new_rarity_var.get()
+        category = category_var.get()
+        universal = universal_check.get()
+
+        if not name:
+            messagebox.showerror('Error', 'Item must have name')
+            return
+        if not description:
+            messagebox.showerror("Error", "Item must have description")
+            return
+        
+        item = Item.load_from_db(db, item_id[0][0])
+        item.update(db, name, description, rarity, category, universal)
+        messagebox.showinfo("Success", f"{item_var.get()} changed to {name}.")
+        update_item_window.destroy()
+
+        update_item_window.destroy()
+
+    tk.Button(update_item_window, text="Update item", command=submit_update_item).pack(pady=10)
+
+def open_shop():
+    pass
 
 if __name__=='__main__':
     root = tk.Tk()
@@ -247,6 +357,14 @@ if __name__=='__main__':
 
     update_location_button = tk.Button(root, text="Update location", command=update_location)
     update_location_button.pack()
+
+    
+    update_owner_button = tk.Button(root, text="Update owner", command=update_owner)
+    update_owner_button.pack()
+
+    update_item_button = tk.Button(root, text="Update an item", command=update_item)
+    update_item_button.pack()
+    
     
 
 

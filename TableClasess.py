@@ -151,12 +151,12 @@ class Item:
         """)
         return [cls(*row) for row in data_list]
 
-    def update(self, db: DatabaseManager):
+    def update(self, db: DatabaseManager, new_name, new_description, new_rarity, new_category, new_universal):
         db.execute("""
             UPDATE ITEM
             SET ItemName = ?, Description = ?, Rarity = ?, Category = ?, Universal = ?
             WHERE ItemID = ?
-        """, (self.name, self.description, self.rarity, self.category, self.universal, self.id))
+        """, (new_name, new_description, new_rarity, new_category, new_universal, self.id))
 
     def __repr__(self):
         return f"<Item #{self.id}: {self.name} ({self.rarity}, {self.category})>"
