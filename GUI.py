@@ -97,13 +97,12 @@ def generate_item():
     item_name_entry.pack(pady=5)
 
     tk.Label(item_window, text='Description').pack()
-    item_description_entry = tk.Text(item_window)
+    item_description_entry = tk.Text(item_window, height=5, width=40)
     item_description_entry.pack(pady=5)
-    item_description_entry.pack()
 
     tk.Label(item_window, text='Select Item Rarity').pack()
     rarity_var = tk.StringVar(item_window)
-    rarity_var.set(RARITIES[0]) #Rarities is not a dict, but a list. See how to hanlde this. Should not be too hard. 
+    rarity_var.set(RARITIES[0]) 
     rarity_menu = tk.OptionMenu(item_window, rarity_var, *RARITIES) 
     rarity_menu.pack(pady=5)
 
@@ -127,7 +126,7 @@ def generate_item():
 
     def submit_item():
         name = item_name_entry.get().strip()
-        description = item_description_entry.get().strip()
+        description = item_description_entry.get("1.0", "end-1c")
         rarity = rarity_var.get()
         category = category_var.get()
         universal = universal_check.get()
