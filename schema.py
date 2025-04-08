@@ -6,7 +6,7 @@ def create_tables():
 
     cursor.execute("PRAGMA foreign_keys = ON")
 
-    # LOCATIONS
+    
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS LOCATIONS (
             LocationName TEXT PRIMARY KEY,
@@ -14,7 +14,6 @@ def create_tables():
         )
     """)
 
-    # OWNER
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS OWNER (
             Owner TEXT PRIMARY KEY,
@@ -22,7 +21,7 @@ def create_tables():
         )
     """)
 
-    # BASE_PRICE
+  
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS BASE_PRICE (
             Rarity TEXT PRIMARY KEY,
@@ -30,7 +29,7 @@ def create_tables():
         )
     """)
 
-    # ITEM with Category + Universal flag
+
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS ITEM (
             ItemID INTEGER PRIMARY KEY,
@@ -44,7 +43,7 @@ def create_tables():
         )
     """)
 
-    # SHOP with Gold column
+    
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS SHOP (
             ShopID INTEGER PRIMARY KEY,
@@ -59,7 +58,7 @@ def create_tables():
         )
     """)
 
-    # SHOP_TYPE_ALLOWED_CATEGORIES
+
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS SHOP_TYPE_ALLOWED_CATEGORIES (
             ShopType TEXT,
@@ -68,7 +67,7 @@ def create_tables():
         )
     """)
 
-    # SHOP_INVENTORY
+
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS SHOP_INVENTORY (
             InventoryID INTEGER PRIMARY KEY,
