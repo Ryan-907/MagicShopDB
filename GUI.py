@@ -335,8 +335,6 @@ def update_item():
 
     tk.Button(update_item_window, text="Update item", command=submit_update_item).pack(pady=10)
 
-def open_shop():
-    pass
 
 if __name__=='__main__':
     root = tk.Tk()
@@ -364,7 +362,9 @@ if __name__=='__main__':
 
     update_item_button = tk.Button(root, text="Update an item", command=update_item)
     update_item_button.pack()
-    
+
+    '''open_shop_button = tk.Button(root, text="Open shop", command=open_shop)
+    open_shop_button.pack()'''
     
 
 
