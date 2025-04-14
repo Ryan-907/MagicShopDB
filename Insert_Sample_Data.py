@@ -1,4 +1,5 @@
 import sqlite3 as sql
+from TableClasess import DatabaseManager
 
 def insert_sample_data():
     conn = sql.connect("shop_inventory.db")
@@ -90,3 +91,5 @@ def insert_sample_data():
 
 if __name__ == "__main__":
     insert_sample_data()
+    db = DatabaseManager("shop_inventory.db")
+    db.print_all_tables()

@@ -1,4 +1,5 @@
 import sqlite3 as sql
+from TableClasess import DatabaseManager
 
 def create_tables():
     conn = sql.connect("shop_inventory.db")
@@ -87,3 +88,6 @@ def create_tables():
 
 if __name__ == "__main__":
     create_tables()
+    db = DatabaseManager("shop_inventory.db")
+    db.print_all_tables()
+

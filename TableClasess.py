@@ -1,5 +1,6 @@
 import sqlite3 as sql
 from dataclasses import dataclass
+from tabulate import tabulate
 
 # Mapping for readability
 LocationSizes = {1: "small", 2: "medium", 3: "large"}
@@ -29,6 +30,28 @@ class DatabaseManager:
         self.cursor.execute(query, params)
         return self.cursor.fetchone()
     
+    def print_all_tables(self):
+        self.cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
+        tables = self.cursor.fetchall()
+
+        if not tables:
+            print("No tables found in the database.")
+            return
+
+        for (table_name,) in tables:
+            print(f"\nTable: {table_name}")
+            self.cursor.execute(f"PRAGMA table_info({table_name})")
+            columns_info = self.cursor.fetchall()
+            column_names = [col[1] for col in columns_info]
+
+            self.cursor.execute(f"SELECT * FROM {table_name}")
+            rows = self.cursor.fetchall()
+
+            if rows:
+                print(tabulate(rows, headers=column_names, tablefmt="grid"))
+            else:
+                print("(No rows in table)")
+
 
 @dataclass
 class Location:
@@ -267,4 +290,5 @@ class Shop:
 
     def __repr__(self):
         return f"{self.Owner}'s {self.ShopType}"
+    
 
