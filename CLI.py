@@ -14,7 +14,6 @@ def get_list(column, table):
     return [row[0] for row in data]
 
 
-
 def generate_location():
     name = pyip.inputStr("Enter location name: ")
     size = SIZES[pyip.inputMenu(list(SIZES.keys()), numbered=True, prompt="\n")] 
@@ -129,9 +128,8 @@ def shop_inventory_menu():
             for item in inventory:
                 print(f"- {item[0]} x{item[1]} ({item[2]}, {item[3]})")
             print()
-            continue  # Prevents it from asking for Item ID & Quantity
+            continue  
 
-        # Fetch eligible items by shop type
         eligible_items = db.fetchall("""
             SELECT ItemID, ItemName FROM ITEM
             WHERE Category = ? OR Universal = 1

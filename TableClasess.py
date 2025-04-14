@@ -28,6 +28,7 @@ class DatabaseManager:
     def fetchone(self, query, params=()):
         self.cursor.execute(query, params)
         return self.cursor.fetchone()
+    
 
 @dataclass
 class Location:
@@ -159,7 +160,7 @@ class Item:
         """, (new_name, new_description, new_rarity, new_category, new_universal, self.id))
 
     def __repr__(self):
-        return f"<Item #{self.id}: {self.name} ({self.rarity}, {self.category})>"
+        return f"<Item #{self.id}: {self.name} ({self.rarity}, {self.category})\n{self.desc}>"
 
 @dataclass
 class Shop:

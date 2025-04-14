@@ -374,6 +374,7 @@ def open_shop():
 
     tk.Button(open_shop_window, text='Open shop', command=show_shop).pack()
 
+
     
 
 
