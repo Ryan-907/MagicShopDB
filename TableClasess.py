@@ -1,5 +1,5 @@
 import sqlite3 as sql
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 # Mapping for readability
 LocationSizes = {1: "small", 2: "medium", 3: "large"}
@@ -161,8 +161,6 @@ class Item:
     def __repr__(self):
         return f"<Item #{self.id}: {self.name} ({self.rarity}, {self.category})>"
 
-from dataclasses import dataclass, field
-
 @dataclass
 class Shop:
     id: int
@@ -170,7 +168,6 @@ class Shop:
     LocationName: str
     ShopType: str
     Gold: int
-    inventory: list = field(default_factory=list)
 
     @classmethod
     def create_new(cls, db, Owner: str, LocationName: str, ShopType: str, Gold: int):
@@ -193,6 +190,7 @@ class Shop:
     def load_all(cls, db):
         results = db.fetchall("SELECT ShopID, Owner, LocationName, ShopType, Gold FROM SHOP")
         return [cls(*row) for row in results]
+    
 
     def update(self, db, new_owner=None, new_location=None, new_type=None, new_gold=None):
         updated_owner = new_owner if new_owner else self.Owner
@@ -255,6 +253,17 @@ class Shop:
                    (quantity, self.id, item_id))
         db.execute("DELETE FROM SHOP_INVENTORY WHERE Quantity <= 0 AND ShopID = ? AND ItemID = ?",
                    (self.id, item_id))
+        
+    def inventory(self, db):
+        items = []
+        itemIDs = db.fetchall("SELECT ItemID from SHOP_INVENTORY WHERE ShopID = ?", (self.id,))
+        for item in range(len(itemIDs)):
+            item = Item.load_from_db(db, itemIDs[item][0])
+            items.append(item)
+        return items
+            
+        
 
     def __repr__(self):
-        return f"<Shop #{self.id}: {self.Owner}'s {self.ShopType} in {self.LocationName} with {self.Gold}g>"
+        return f"{self.Owner}'s {self.ShopType}"
+

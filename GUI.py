@@ -335,6 +335,49 @@ def update_item():
 
     tk.Button(update_item_window, text="Update item", command=submit_update_item).pack(pady=10)
 
+def open_shop():
+    open_shop_window = tk.Toplevel()
+    open_shop_window.title("Open a shop")
+    open_shop_window.geometry(WINDOW_SIZE)
+
+    tk.Label(open_shop_window, text='Select a shop to open').pack()
+
+    shops = list(Shop.load_all(db))
+
+    
+    shop_var = tk.StringVar()
+    shop_var.set(str(shops[0]))  
+
+    
+    shop_lookup = {str(shop): shop for shop in shops}
+
+    shop_menu = tk.OptionMenu(open_shop_window, shop_var, *shop_lookup.keys())
+    shop_menu.pack()
+
+    def show_shop():
+        root.withdraw()
+        open_shop_window.withdraw()
+        show_window = tk.Toplevel()
+        show_window.title('Showing shop')
+        show_window.geometry(WINDOW_SIZE)
+
+        selected_str = shop_var.get()
+        selected_shop = shop_lookup[selected_str]
+
+        tk.Label(show_window, text=f'{selected_shop}').pack()
+        tk.Label(show_window, text=f'Location: {selected_shop.LocationName}').pack()
+        tk.Label(show_window, text=f'Gold: {selected_shop.Gold}').pack()
+        print(selected_shop)
+        
+
+        tk.Button(show_window, text='Return to main menu', command=root.deiconify).pack()
+
+    tk.Button(open_shop_window, text='Open shop', command=show_shop).pack()
+
+    
+
+
+
 
 if __name__=='__main__':
     root = tk.Tk()
@@ -363,8 +406,8 @@ if __name__=='__main__':
     update_item_button = tk.Button(root, text="Update an item", command=update_item)
     update_item_button.pack()
 
-    '''open_shop_button = tk.Button(root, text="Open shop", command=open_shop)
-    open_shop_button.pack()'''
+    open_shop_button = tk.Button(root, text="Open shop", command=open_shop)
+    open_shop_button.pack()
     
 
 
