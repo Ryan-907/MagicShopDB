@@ -183,7 +183,7 @@ class Item:
         """, (new_name, new_description, new_rarity, new_category, new_universal, self.id))
 
     def __repr__(self):
-        return f"<Item #{self.id}: {self.name} ({self.rarity}, {self.category})\n{self.desc}>"
+        return f"{self.name} ({self.rarity}, {self.category})\n{self.description} (Item ID:{self.id})"
 
 @dataclass
 class Shop:

@@ -367,10 +367,13 @@ def open_shop():
         tk.Label(show_window, text=f'{selected_shop}').pack()
         tk.Label(show_window, text=f'Location: {selected_shop.LocationName}').pack()
         tk.Label(show_window, text=f'Gold: {selected_shop.Gold}').pack()
+        items = selected_shop.inventory(db)
+        for item in items:
+            tk.Label(show_window, text=f'{item}').pack()
         print(selected_shop)
         
 
-        tk.Button(show_window, text='Return to main menu', command=root.deiconify).pack()
+        tk.Button(show_window, text='Open main menu', command=root.deiconify).pack()
 
     tk.Button(open_shop_window, text='Open shop', command=show_shop).pack()
 
